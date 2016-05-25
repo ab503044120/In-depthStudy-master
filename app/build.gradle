@@ -1,0 +1,138 @@
+apply plugin: 'com.android.application'
+apply plugin: 'android-apt'
+
+Properties prop = new Properties()
+prop.load(new FileInputStream(file("../signing.properties")))
+
+android {
+
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    defaultConfig {
+        applicationId "com.sun.study"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 2
+        versionName "1.1"
+        multiDexEnabled true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    lintOptions {
+        abortOnError false
+        disable 'InvalidPackage'
+    }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+
+    signingConfigs {
+        release {
+            storeFile file(prop['KEYSTORE_FILEPATH'])
+            storePassword prop['STORE_PASSWORD']
+            keyAlias prop['KEY_ALIAS']
+            keyPassword prop['KEY_PASSWORD']
+        }
+    }
+
+    buildTypes {
+
+        release {
+            //压缩资源
+            shrinkResources true
+            //zip优化
+            zipAlignEnabled true
+            //apk签名
+            signingConfig signingConfigs.release
+
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            applicationVariants.all {
+                variant -> generateAppName(variant)
+            }
+        }
+
+        debug{
+            //压缩资源
+            shrinkResources false
+            //zip优化
+            zipAlignEnabled false
+            //apk签名
+            signingConfig signingConfigs.release
+
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            applicationVariants.all {
+                variant -> generateAppName(variant)
+            }
+        }
+    }
+}
+
+//生成自定义App名称
+def generateAppName(variant) {
+    variant.outputs.each {
+        output -> output.outputFile = new File (output.outputFile.parent,
+                "In-depthStudy_${variant.buildType.name}_V${variant.versionName}.apk".toLowerCase())
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:23.2.1'
+    compile 'com.android.support:design:23.2.1'
+
+    // Local libs
+    compile project(':extras-libs:DroidPlugin')
+
+    // ButterKnife
+    compile 'com.jakewharton:butterknife:7.0.1'
+
+    // Logger
+    compile 'com.orhanobut:logger:1.4'
+
+    // OkHttp
+    compile 'com.squareup.okhttp3:okhttp:3.2.0'
+
+    // MultiDex
+    compile 'com.android.support:multidex:1.0.0'
+
+    // SharedPreferences
+    apt 'de.devland.esperandro:esperandro:2.2.0'
+    compile 'de.devland.esperandro:esperandro-api:2.2.0'
+
+    // SystemBarTint
+    compile 'com.readystatesoftware.systembartint:systembartint:1.0.3'
+
+    // Material Dialog
+    compile('com.github.afollestad.material-dialogs:core:0.8.5.7@aar') {
+        transitive = true
+    }
+
+    // Fresco
+    compile 'com.facebook.fresco:fresco:0.9.0'
+
+    // RxJava RxAndroid
+    compile 'io.reactivex:rxjava:1.0.16'
+    compile 'io.reactivex:rxandroid:1.0.1'
+
+    // Retrofit Gson RxJava
+    compile 'com.squareup.retrofit:retrofit:2.0.0-beta2'
+    compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
+    compile 'com.squareup.retrofit:adapter-rxjava:2.0.0-beta2'
+
+    //Floating Search View
+    compile 'com.github.arimorty:floatingsearchview:1.1.2'
+
+    // MultiDex
+    compile 'com.android.support:multidex:1.0.0'
+
+    // Sweet Alert Dialog
+    compile 'cn.pedant.sweetalert:library:1.3'
+
+}

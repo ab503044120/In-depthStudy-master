@@ -1,0 +1,38 @@
+
+buildscript {
+
+    repositories {
+        jcenter()
+        maven { url 'https://dl.bintray.com/drummer-aidan/maven' }
+        maven { url 'https://jitpack.io' }
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.1.0'
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+        maven { url 'https://dl.bintray.com/drummer-aidan/maven' }
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+allprojects.each { p ->
+    p.buildDir "bin"
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+ext {
+    compileSdkVersion = 23
+    buildToolsVersion = "23.0.2"
+    minSdkVersion = 14
+    targetSdkVersion = 23
+}
+
